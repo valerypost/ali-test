@@ -7,8 +7,13 @@
     "npm": "3.10.10"
   },
   "dependencies": {
+    "body-parser": "^1.17.1",
+    "cheerio": "^0.22.0",
+    "ejs": "*",
     "express": "3.x",
-    "zombie": "*",
-    "ejs": "*"
+    "fs": "0.0.1-security",
+    "q": "^1.5.0",
+    "request": "^2.81.0",
+    "zombie": "*"
   }
 }

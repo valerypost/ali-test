@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 var fs = require('fs')
 var q = require('q');
 var searchTerm = 'smd';
-var url = 'https://www.aliexpress.com/wholesale?ltype=wholesale&d=y&origin=y&isViewCP=y&catId=0&initiative_id=SB_20170316090523&blanktest=0&tc=af&SearchText=' + searchTerm;
+var url = 'https://www.aliexpress.com/wholesale?SearchText=' + searchTerm;
 var pagination='www.aliexpress.com/wholesale?initiative';
 var shiping = 'https://freight.aliexpress.com/ajaxFreightCalculateService.htm?callback=jQuery18303278056892461083_1490202654424&f=d&count=1&currencyCode=USD&sendGoodsCountry=&country=CA&province=&city=&abVersion=1&_=1490202775139&productid=';
 var pages=[];
@@ -14,9 +14,9 @@ var requests=[];
 var pages=[];
 console.log("start");
 
-function generateSearchResult(searchPhase) {
-
-    var htmlOut="";
+exports.generateSearchResult= function (searchPhase,res) {
+    res.write("!!!!!!!!!!!!!"+searchPhase);
+    var htmlOut="start !!!!!!!!!!!!!";
     request(url+searchPhase, function(err, resp, body){
         $ = cheerio.load(body);
         var links = $('a'); //jquery get all hyperlinks
@@ -39,7 +39,7 @@ function generateSearchResult(searchPhase) {
 
 
         pages.forEach(function (pageUrl) {
-            requests.push(processDetail(pageUrl,htmlOut));
+            requests.push(processDetail(pageUrl));
         });
         // console.log("counter:" + itemCounter);
 
@@ -66,6 +66,7 @@ function generateSearchResult(searchPhase) {
                 });
 
                 console.log("end");
+                res.end();
 
             });
             //
@@ -81,7 +82,7 @@ function generateSearchResult(searchPhase) {
     return htmlOut;
 
 
-    function processDetail(pageUrl,htmlOut) {
+    function processDetail(pageUrl) {
         var d = q.defer();
 
         request(pageUrl, function (err, resp, body) {
@@ -121,7 +122,7 @@ function generateSearchResult(searchPhase) {
                         urlPage=urlPage.substring(0,startParam);
                         var htmlA = '<a  href="' + urlPage + '">' + name + '</a>';
                         console.log(htmlA);
-                        htmlOut=htmlOut+htmlA+'</br>';
+                        res.write(htmlA+'</br>');
                         p.resolve("epacket");
                     } else {
                         p.resolve("ship??");
